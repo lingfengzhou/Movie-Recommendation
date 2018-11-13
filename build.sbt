@@ -1,3 +1,5 @@
+import sbt.Keys.libraryDependencies
+
 name := "CSYE7200-MovieRecommendation"
 version := "0.1"
 
@@ -26,5 +28,7 @@ lazy val commonSettings = Seq(
 )
 
 lazy val dataCenterSettings = Seq(
-  scalaVersion := "2.11.12"
+  scalaVersion := "2.11.12",
+  libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.0"
 )
+
