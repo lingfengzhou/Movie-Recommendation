@@ -1,15 +1,15 @@
 package com.csye7200.model
 
-import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.config.{Config => typesafeConfig, ConfigFactory}
 
 object Config {
   private val config = ConfigFactory.load()
 
-  def getFrontendConfig(args: Array[String]): Config = {
+  def getFrontendConfig(args: Array[String]): typesafeConfig = {
     getConfig(args, "frontend")
   }
 
-  def getBackendConfig(args: Array[String]): Config = {
+  def getBackendConfig(args: Array[String]): typesafeConfig = {
     getConfig(args, "backend")
   }
 

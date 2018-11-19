@@ -26,9 +26,11 @@ lazy val Model = project
         "com.typesafe.akka" %% "akka-cluster-tools" % akkaVersion,
         "com.typesafe.akka" %% "akka-multi-node-testkit" % akkaVersion,
         "com.typesafe.akka" %% "akka-stream" % akkaVersion,
-        "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion
+        "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
+        "com.github.romix.akka" %% "akka-kryo-serialization" % "0.5.1"
       )
     },
+    Compile/mainClass := Some("com.csye7200.model.Main"),
     fork in run := true,
   )
 

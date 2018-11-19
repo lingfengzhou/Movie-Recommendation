@@ -13,6 +13,7 @@ class PostSender extends Actor with ActorLogging {
     case BackendRegistration if !backends.contains(sender()) =>
       context watch sender()
       backends = backends :+ sender()
+      log.info(s"Current size of backends: ${backends.size}")
     case Terminated(a) =>
       backends = backends.filterNot(_ == a)
   }

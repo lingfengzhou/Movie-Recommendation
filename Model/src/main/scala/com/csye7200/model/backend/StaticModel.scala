@@ -1,9 +1,8 @@
 package com.csye7200.model.backend
 
-import akka.cluster.{Cluster, Member}
+import akka.cluster.{Cluster, Member, MemberStatus}
 import akka.cluster.ClusterEvent.{CurrentClusterState, MemberUp}
 import akka.actor.{Actor, ActorLogging, RootActorPath}
-import akka.cluster.protobuf.msg.ClusterMessages.MemberStatus
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
