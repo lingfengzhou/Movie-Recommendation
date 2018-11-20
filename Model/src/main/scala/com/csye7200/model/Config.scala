@@ -5,16 +5,15 @@ import com.typesafe.config.{Config => typesafeConfig, ConfigFactory}
 object Config {
   private val config = ConfigFactory.load()
 
-  def getFrontendConfig(args: Array[String]): typesafeConfig = {
-    getConfig(args, "frontend")
+  def getFrontendConfig(port: Int): typesafeConfig = {
+    getConfig(port, "frontend")
   }
 
-  def getBackendConfig(args: Array[String]): typesafeConfig = {
-    getConfig(args, "backend")
+  def getBackendConfig(port: Int): typesafeConfig = {
+    getConfig(port, "backend")
   }
 
-  private def getConfig(args: Array[String], role: String) = {
-    val port = if (args.isEmpty) "0" else args(0)
+  private def getConfig(port: Int, role: String) = {
     ConfigFactory.parseString(
       s"""
          |akka.remote.artery.canonical.port=$port

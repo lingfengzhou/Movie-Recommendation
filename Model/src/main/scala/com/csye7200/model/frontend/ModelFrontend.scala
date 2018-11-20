@@ -11,11 +11,11 @@ import scala.concurrent.ExecutionContextExecutor
 import scala.util.{Failure, Success}
 
 object ModelFrontend {
-  def apply(args: Array[String]): ModelFrontend = new ModelFrontend(args)
+  def apply(port: Int): ModelFrontend = new ModelFrontend(port)
 }
 
-class ModelFrontend(args: Array[String]) extends HttpRoute {
-  val config: com.typesafe.config.Config = Config.getFrontendConfig(args)
+class ModelFrontend(port: Int) extends HttpRoute {
+  val config: com.typesafe.config.Config = Config.getFrontendConfig(port)
 
   implicit val system: ActorSystem = ActorSystem("ModelCluster", config)
   implicit val executor: ExecutionContextExecutor = system.dispatcher
@@ -27,17 +27,17 @@ class ModelFrontend(args: Array[String]) extends HttpRoute {
   private val mode = config.getString("frontend.mode")
 
   private val interface: String = config.getString(s"frontend.$mode.interface")
-  private val port: Int = config.getInt(s"frontend.$mode.port")
+  private val HttpServerPort: Int = config.getInt(s"frontend.$mode.port")
 
   def start {
-    start(port)
+    start(HttpServerPort)
   }
 
-  private def start(port: Int): Unit = {
-    Http().bindAndHandle(route, interface, port) onComplete {
-      case Success(_) => logger.info(s"Server listens on $interface:$port")
+  private def start(HttpServerPort: Int): Unit = {
+    Http().bindAndHandle(route, interface, HttpServerPort) onComplete {
+      case Success(_) => logger.info(s"Server listens on $interface:$HttpServerPort")
       case Failure(exception) => exception.getCause match {
-        case _: java.net.BindException => start(port + 1)
+        case _: java.net.BindException => start(HttpServerPort + 1)
         case causeException => causeException.printStackTrace()
       }
     }

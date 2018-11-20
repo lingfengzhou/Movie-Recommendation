@@ -7,11 +7,11 @@ import com.csye7200.model.Config
 import scala.concurrent.ExecutionContextExecutor
 
 object ModelBackend {
-  def apply(args: Array[String]): ModelBackend = new ModelBackend(args)
+  def apply(port: Int): ModelBackend = new ModelBackend(port)
 }
 
-class ModelBackend(args: Array[String]) {
-  val config: com.typesafe.config.Config = Config.getBackendConfig(args)
+class ModelBackend(port: Int) {
+  val config: com.typesafe.config.Config = Config.getBackendConfig(port)
 
   implicit val system: ActorSystem = ActorSystem("ModelCluster", config)
   implicit val executor: ExecutionContextExecutor = system.dispatcher

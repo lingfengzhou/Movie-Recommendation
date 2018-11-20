@@ -11,6 +11,8 @@ final case class MovieResponse(origin: MovieInfo, related: Seq[MovieInfo], limit
 final case class JobFailed(reason: String)
 case object BackendRegistration
 
+case class ArgsConfig(mode: String = "", number: Int = -1, port: Int = 0)
+
 trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val itemFormat: RootJsonFormat[MovieInfo] = jsonFormat8(MovieInfo)
   implicit val orderFormat: RootJsonFormat[Movie] = jsonFormat1(Movie)

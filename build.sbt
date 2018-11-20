@@ -27,7 +27,7 @@ lazy val Model = project
         "com.typesafe.akka" %% "akka-multi-node-testkit" % akkaVersion,
         "com.typesafe.akka" %% "akka-stream" % akkaVersion,
         "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
-        "com.github.romix.akka" %% "akka-kryo-serialization" % "0.5.1"
+        "com.github.scopt" %% "scopt" % "3.7.0"
       )
     },
     Compile/mainClass := Some("com.csye7200.model.Main"),
