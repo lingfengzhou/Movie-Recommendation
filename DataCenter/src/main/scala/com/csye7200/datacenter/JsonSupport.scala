@@ -8,6 +8,7 @@ import com.csye7200.datacenter.ClassificationActor.ActionPerformed
     import spray.json.DefaultJsonProtocol._
 
     implicit val movieJsonFormat = jsonFormat7(Movie)
+    implicit val infoJsonFormat = jsonFormat2(Info)
     implicit val recMoviesJsonFormat = jsonFormat1(RecMovies)
 
     implicit val actionPerformedJsonFormat = jsonFormat1(ActionPerformed)
