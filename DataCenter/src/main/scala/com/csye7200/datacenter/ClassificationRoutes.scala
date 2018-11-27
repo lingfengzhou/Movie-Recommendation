@@ -29,32 +29,46 @@ trait ClassificationRoutes extends JsonSupport{
   lazy val classificationRoutes: Route =
     pathPrefix("movies") {
       concat(
-        pathEnd{
+        pathPrefix("module") {
           concat(
-            post{path("update-classification")
-              {
+            post {
+              path("update") {
                 val classified: Future[ActionPerformed] =
-                  (classificationActor ? DoKmeans).mapTo[ActionPerformed]
-                onSuccess(classified){ performed =>
-                  complete(StatusCodes.Created,performed)
+                  (classificationActor .?(DoClassification)(600.seconds) ).mapTo[ActionPerformed]
+                onSuccess(classified) { performed =>
+                  complete(StatusCodes.Created, performed)
                 }
               }
             }
           )
-        },
-        path(Segment) { title=>
-          concat(
-            get {
-              val maybeMovies: Future[Option[RecMovies]] =
-                (classificationActor ? GetRecMovies(title,limit = 3)).mapTo[Option[RecMovies]]
-              rejectEmptyResponse{
-                complete(maybeMovies)
+        }
+        ,
+        pathPrefix("element"){
+//          concat(
+//          path(Segment) { title=>
+//              get {
+//                val maybeMovies: Future[Option[RecMovies]] =
+//                  (classificationActor ? GetRecMovies(title,limit = 3)).mapTo[Option[RecMovies]]
+//                rejectEmptyResponse{
+//                  complete(maybeMovies)
+//                }
+//              }
+//          },
+          post{
+            path("getMovie"){
+              entity(as[Info]) { info =>
+                val maybeMovies: Future[Option[RecMovies]] =
+                  (classificationActor ? GetRecMovies(info.title,info.limit)).mapTo[Option[RecMovies]]
+                onSuccess(maybeMovies) {
+//                  performed: Option[RecMovies] => performed match {
+                  case Some(movies) => complete(StatusCodes.Created, movies)
+                  case None => complete(StatusCodes.NoContent)
+                }
               }
             }
-
-          )
-
+          }
         }
+
       )
     }
 
