@@ -10,9 +10,10 @@ import akka.http.scaladsl.server.directives.RouteDirectives.complete
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.event.Logging
-import akka.http.scaladsl.model.{StatusCode, StatusCodes}
+import akka.http.scaladsl.model.{HttpHeader, StatusCode, StatusCodes}
 import akka.util.Timeout
 import com.csye7200.datacenter.ClassificationActor._
+import org.apache.spark.sql.DataFrame
 
 import scala.concurrent.Future
 
@@ -24,7 +25,7 @@ trait ClassificationRoutes extends JsonSupport{
 
   def classificationActor: ActorRef
 
-  implicit lazy val timeout = Timeout(5.seconds)
+  implicit lazy val timeout = Timeout(60.seconds)
 
   lazy val classificationRoutes: Route =
     pathPrefix("movies") {
@@ -57,12 +58,13 @@ trait ClassificationRoutes extends JsonSupport{
           post{
             path("getMovie"){
               entity(as[Info]) { info =>
-                val maybeMovies: Future[Option[RecMovies]] =
-                  (classificationActor ? GetRecMovies(info.title,info.limit)).mapTo[Option[RecMovies]]
+                val maybeMovies: Future[String] =
+                  (classificationActor ? GetRecMovies(info.title,info.limit)).mapTo[String]
                 onSuccess(maybeMovies) {
+                  case perform : String => complete((StatusCodes.Found),perform)
 //                  performed: Option[RecMovies] => performed match {
-                  case Some(movies) => complete(StatusCodes.Created, movies)
-                  case None => complete(StatusCodes.NoContent)
+//                  case Some(movies) => complete(StatusCodes.Found, movies)
+//                  case None => complete(StatusCodes.NotFound)
                 }
               }
             }

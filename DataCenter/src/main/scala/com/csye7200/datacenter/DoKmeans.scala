@@ -10,7 +10,7 @@ import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.{DoubleType, IntegerType}
 
 object DoKmeans {
-    def train(args: Array[String]): DataFrame = {
+    def train(): DataFrame = {
         val spark = SparkSession.builder
           .master("local")
           .appName("Kmeans")
@@ -147,7 +147,8 @@ object DoKmeans {
         val silhouette = evaluator.evaluate(predictionResult)
         println(s"silhouette: "+silhouette)
         //kMeansPredictionModel.clusterCenters.foreach(println)
-        predictionResult.write.parquet("DataCenter/src/main/resources/result.parquet")
+        predictionResult.write.mode(SaveMode.Overwrite).parquet("DataCenter/src/main/resources/result.parquet")
+        spark.sparkContext.stop()
         predictionResult
     }
 }
