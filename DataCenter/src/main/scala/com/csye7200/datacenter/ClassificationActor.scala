@@ -4,8 +4,9 @@ import akka.actor.{Actor, ActorLogging, Props}
 import org.joda.time.DateTime
 
 
-final case class Movie(title: String, gneres: Seq[String], runningTime: Int,
-                       release: Int, directors: Seq[String], rating: Double, numVotes: Int)
+final case class Movie(title: String, genres: String, runningTime: Int,
+                       startYear: Int, directors: String, rating: Double, numVotes: Int)
+final case class Info(title: String, limit: Int)
 //recommended movies
 final case class RecMovies(movies: Seq[Movie])
 
@@ -22,15 +23,15 @@ object ClassificationActor{
 class ClassificationActor extends Actor with ActorLogging{
 
   import ClassificationActor._
-  var recMovies = Set.empty[Movie]
 
   override def receive: Receive = {
 
     case DoClassification =>
-      DoKmeans
+      DoKmeans.train()
       sender() ! ActionPerformed(s"Classification completed at ${DateTime.now().toString()}!")
+
     case GetRecMovies(title,limit) =>
-      // TODO find(title: String): RecMovies
-      sender() ! RecMovies(recMovies.toSeq)
+      val recMovies = GetResults.getmovies(title,limit)
+      sender() ! recMovies
   }
 }
