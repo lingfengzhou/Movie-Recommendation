@@ -4,7 +4,7 @@ import org.apache.spark.ml.Pipeline
 import org.apache.spark.ml.clustering.KMeans
 import org.apache.spark.ml.evaluation.ClusteringEvaluator
 import org.apache.spark.ml.feature.{CountVectorizerModel, OneHotEncoder, StringIndexer, VectorAssembler}
-import org.apache.spark.mllib.linalg.{Vector, Vectors}
+import org.apache.spark.ml.linalg.{Vector, Vectors}
 import org.apache.spark.sql.{DataFrame, Dataset, SaveMode, SparkSession}
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.{DoubleType, IntegerType}
@@ -128,27 +128,31 @@ object DoKmeans {
         df_final.show(10)
 
 
-
-        val assembler = new VectorAssembler().setInputCols(Array("sparseGenres","rms","syear"))
-                                             .setOutputCol("features").setHandleInvalid("skip")
-        val kmeans = new KMeans().setK(108).setFeaturesCol("features").setPredictionCol("prediction")
-
         //using normal flow(pro: get clusterCenter)
-        //val kMeansPredictionModel = kmeans.fit(assembler)
-        //val predictionResult = kMeansPredictionModel.transform(assembler)
+        val assembler = new VectorAssembler().setInputCols(Array("sparseGenres","rms","syear"))
+                                             .setOutputCol("features").setHandleInvalid("skip").transform(df_final)
+        val kmeans = new KMeans().setK(108).setFeaturesCol("features").setPredictionCol("prediction")
+        val kMeansPredictionModel = kmeans.fit(assembler)
+        val predictionResult = kMeansPredictionModel.transform(assembler)
+        // UDF that calculates for each point distance from each cluster center
+        val distFromCenter = udf((features: Vector, c: Int) => Vectors.sqdist(features, kMeansPredictionModel.clusterCenters(c)))
 
+        val distancesDF = predictionResult.withColumn("distanceFromCenter", distFromCenter($"features", $"prediction"))
         //using pipeline
-        val pipeline = new Pipeline().setStages(Array(assembler, kmeans))
-        val kMeansPredictionModel = pipeline.fit(df_final)
-        val predictionResult = kMeansPredictionModel.transform(df_final)
-        predictionResult.show(100)
+//        val assembler = new VectorAssembler().setInputCols(Array("sparseGenres","rms","syear"))
+//          .setOutputCol("features").setHandleInvalid("skip")
+//        val kmeans = new KMeans().setK(108).setFeaturesCol("features").setPredictionCol("prediction")
+//        val pipeline = new Pipeline().setStages(Array(assembler, kmeans))
+//        val kMeansPredictionModel = pipeline.fit(df_final)
+//        val predictionResult = kMeansPredictionModel.transform(df_final)
+//        predictionResult.show(100)
 
-        val evaluator = new ClusteringEvaluator()
-        val silhouette = evaluator.evaluate(predictionResult)
-        println(s"silhouette: "+silhouette)
-        //kMeansPredictionModel.clusterCenters.foreach(println)
-        predictionResult.write.mode(SaveMode.Overwrite).parquet("DataCenter/src/main/resources/result.parquet")
+//        val evaluator = new ClusteringEvaluator()
+//        val silhouette = evaluator.evaluate(predictionResult)
+//        println(s"silhouette: "+silhouette)
+        distancesDF.show(10)
+        distancesDF.write.mode(SaveMode.Overwrite).parquet("DataCenter/src/main/resources/result.parquet")
         spark.sparkContext.stop()
-        predictionResult
+        distancesDF
     }
 }
