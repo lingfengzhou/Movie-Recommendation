@@ -9,7 +9,9 @@ class PostSender extends Actor with ActorLogging {
 
   def receive = {
     case _: Movie if backends.isEmpty => sender() ! JobFailed("No available backend, try again later.")
-    case job: Movie => backends(jobCounter % backends.size) forward job
+    case job: Movie =>
+      jobCounter += 1
+      backends(jobCounter % backends.size) forward job
     case BackendRegistration if !backends.contains(sender()) =>
       context watch sender()
       backends = backends :+ sender()

@@ -24,7 +24,7 @@ trait HttpRoute extends Directives with JsonSupport {
   val postSender: ActorRef
 
   lazy val route: Route =
-    path("query") {
+    path("search") {
       post {
         entity(as[Movie]) {
           movie => {

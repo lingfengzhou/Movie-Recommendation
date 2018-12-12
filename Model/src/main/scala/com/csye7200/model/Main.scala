@@ -49,7 +49,7 @@ object Main {
   }
 
   def defaultStart = {
-    for (i <- 0 until 3) ModelFrontend(2551 + i).start
-    for(_ <- 0 until 6) ModelBackend(0).start
+    for (i <- 0 until 2) ModelFrontend(2551 + i).start
+    for(_ <- 0 until 2) ModelBackend(0).start
   }
 }

@@ -31,7 +31,7 @@ class StaticModel(config: Config, dataSourceOption: Option[RequestEntity => Http
   }
 
   def receive: PartialFunction[Any, Unit] = {
-    case Movie(title) => handleRequest(Marshal(MovieRequest(title, 50, 0.9)).to[RequestEntity])
+    case Movie(title) => handleRequest(Marshal(MovieRequest(title, 50)).to[RequestEntity])
     case HttpResponse(StatusCodes.OK, _, entity, _) =>
       log.debug(s"Receive movie info: $entity")
       handleMovieInfo(Unmarshal(entity.withContentType(ContentTypes.`application/json`)).to[MovieResponse])
@@ -57,10 +57,6 @@ class StaticModel(config: Config, dataSourceOption: Option[RequestEntity => Http
   }
 
   private def handleMovieInfo(movieResponseFuture: Future[MovieResponse]): Unit = {
-    movieResponseFuture onComplete {
-      case scala.util.Success(_) =>
-      case scala.util.Failure(exception) => exception.printStackTrace()
-    }
     val originalSender = sender()
     for (movieResponse <- movieResponseFuture; origin = movieResponse.origin; related = movieResponse.related; sortedRelated = related.sortBy[Int](movieInfo => {
       if(movieInfo.director == origin.director)
