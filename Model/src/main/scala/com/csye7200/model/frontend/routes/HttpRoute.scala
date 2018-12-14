@@ -5,7 +5,7 @@ import akka.http.scaladsl.server.{Directives, Route}
 import akka.pattern.ask
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
-import com.csye7200.model.{JobFailed, JsonSupport, Movie, MovieInfo}
+import com.csye7200.model._
 import com.typesafe.config.Config
 
 import scala.concurrent.ExecutionContext
@@ -29,12 +29,11 @@ trait HttpRoute extends Directives with JsonSupport {
         entity(as[Movie]) {
           movie => {
             onSuccess(postSender ? movie) {
-              case result: Seq[MovieInfo] => complete(result)
+              case movieResponse: MovieResponse => complete(movieResponse)
               case JobFailed(reason) => complete(reason)
             }
           }
         }
       }
     }
-
 }

@@ -66,6 +66,6 @@ class StaticModel(config: Config, dataSourceOption: Option[RequestEntity => Http
           1
       else
         0
-    })) originalSender ! sortedRelated.takeRight(movieResponse.limit)
+    })) originalSender ! MovieResponse(origin, sortedRelated)
   }
 }
