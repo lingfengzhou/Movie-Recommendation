@@ -5,9 +5,14 @@ val akkaVersion = "2.5.18"
 lazy val root = project.in(file(".")).aggregate(Controller, Model, DataCenter)
 
 lazy val Controller = project
+  .enablePlugins(PlayScala)
   .settings(
     name := "Controller",
-    commonSettings
+    commonSettings,
+    libraryDependencies ++= Seq("com.typesafe.play" %% "play" % "2.6.20"),
+    libraryDependencies += guice,
+    libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test,
+    libraryDependencies += ws
   )
 
 lazy val Model = project
