@@ -31,7 +31,7 @@ class StaticModel(config: Config, dataSourceOption: Option[RequestEntity => Http
   }
 
   def receive: PartialFunction[Any, Unit] = {
-    case Movie(title) => handleRequest(Marshal(MovieRequest(title, 50)).to[RequestEntity])
+    case Movie(title) => handleRequest(Marshal(MovieRequest(title, 3)).to[RequestEntity])
     case HttpResponse(StatusCodes.OK, _, entity, _) =>
       log.debug(s"Receive movie info: $entity")
       handleMovieInfo(Unmarshal(entity.withContentType(ContentTypes.`application/json`)).to[MovieResponse])
@@ -51,7 +51,7 @@ class StaticModel(config: Config, dataSourceOption: Option[RequestEntity => Http
         case Some(dataSource) =>
           self tell (dataSource.apply(entity), originalSender)
         case None =>
-          for(response <- http.singleRequest(HttpRequest(HttpMethods.POST, config.getString("backend.dataCenterUrl"), entity = entity)))
+          for(response <- http.singleRequest(HttpRequest(HttpMethods.POST, config.getString("backend.dataCenterUrl") + "/movies/element/getMovie", entity = entity)))
             self tell (response, originalSender)
       }
   }

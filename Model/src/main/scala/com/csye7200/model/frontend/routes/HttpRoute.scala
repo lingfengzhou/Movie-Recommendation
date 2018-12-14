@@ -17,7 +17,7 @@ trait HttpRoute extends Directives with JsonSupport {
   implicit val system: ActorSystem
   implicit val executor: ExecutionContext
   implicit val materializer: ActorMaterializer
-  implicit val timeout: Timeout = 3.seconds
+  implicit val timeout: Timeout = 10.seconds
 
   val config: Config
 
