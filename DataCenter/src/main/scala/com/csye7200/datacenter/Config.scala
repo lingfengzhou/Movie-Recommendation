@@ -7,21 +7,21 @@ object Config {
   val config = ConfigFactory.load()
 
   def getSparkMaster(): String ={
-    config.getString("spark/mode")
+    config.getString("spark.mode")
   }
   def getSparkName():String ={
-    config.getString("spark/appName")
+    config.getString("spark.appName")
   }
 
   def getLogLevel():String ={
-    config.getString("spark/logLevel")
+    config.getString("spark.logLevel")
   }
 
   def getSeverInterface():String ={
-    config.getString("sever/interface")
+    config.getString("sever.interface")
   }
   def getSeverPort():Int ={
-    config.getInt("sever/port")
+    config.getInt("sever.port")
   }
 
 }

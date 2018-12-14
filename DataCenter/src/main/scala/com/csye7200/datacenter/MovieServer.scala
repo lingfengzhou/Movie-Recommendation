@@ -32,7 +32,7 @@ object MovieServer extends App with ClassificationRoutes {
   //#http-server
   Http().bindAndHandle(routes, Config.getSeverInterface(), Config.getSeverPort())
 
-  println(s"Server online at http:${Config.getSeverInterface()}:${Config.getSeverPort()}")
+  println(s"Server online at http://${Config.getSeverInterface()}:${Config.getSeverPort()}")
 
   Await.result(system.whenTerminated, Duration.Inf)
   //#http-server
