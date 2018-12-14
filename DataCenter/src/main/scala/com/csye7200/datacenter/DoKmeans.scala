@@ -11,10 +11,10 @@ import org.apache.spark.sql.types.{DoubleType, IntegerType}
 
 object DoKmeans {
     val spark = SparkSession.builder
-      .master("local")
-      .appName("getmovies")
+      .master(Config.getSparkMaster())
+      .appName(Config.getSparkName())
       .getOrCreate()
-    spark.sparkContext.setLogLevel("ERROR")
+    spark.sparkContext.setLogLevel(Config.getLogLevel())
     import spark.implicits._
 
     def train(): DataFrame = {

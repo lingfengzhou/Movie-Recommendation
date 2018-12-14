@@ -7,10 +7,10 @@ import org.apache.spark.sql.functions._
 
 object GetResults {
   val spark = SparkSession.builder
-    .master("local")
-    .appName("getmovies")
+    .master(Config.getSparkMaster())
+    .appName(Config.getSparkName())
     .getOrCreate()
-  spark.sparkContext.setLogLevel("ERROR")
+  spark.sparkContext.setLogLevel(Config.getLogLevel())
   import spark.implicits._
   val df = spark.read.parquet("DataCenter/src/main/resources/result.parquet").cache()
   def getmovies(title: String, limit: Int): String = {

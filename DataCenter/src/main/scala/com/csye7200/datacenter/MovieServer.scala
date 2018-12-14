@@ -20,19 +20,19 @@ object MovieServer extends App with ClassificationRoutes {
 
   val classificationActor: ActorRef = system.actorOf(ClassificationActor.props, "classificationActor")
   val spark = SparkSession.builder
-    .master("local")
-    .appName("getmovies")
+    .master(Config.getSparkMaster())
+    .appName(Config.getSparkName())
     .getOrCreate()
-  spark.sparkContext.setLogLevel("ERROR")
+  spark.sparkContext.setLogLevel(Config.getLogLevel())
   //#main-class
   // from the UserRoutes trait
   lazy val routes: Route = classificationRoutes
   //#main-class
 
   //#http-server
-  Http().bindAndHandle(routes, "0.0.0.0", 8278)
+  Http().bindAndHandle(routes, Config.getSeverInterface(), Config.getSeverPort())
 
-  println(s"Server online at http://0.0.0.0:8278/")
+  println(s"Server online at http:${Config.getSeverInterface()}:${Config.getSeverPort()}")
 
   Await.result(system.whenTerminated, Duration.Inf)
   //#http-server
