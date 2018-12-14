@@ -33,7 +33,7 @@ object GetResults {
       .drop("prediction","distanceFromCenter")
     val related = all.filter($"title"=!=title).limit(limit)
     val origin_df = all.filter($"title"===title)
-    val res = origin_df.union(related).toJSON.collect()
+    val res = origin_df.union(related).na.fill("").toJSON.collect()
     val origin_json = res(0)
     val related_json = res.drop(1).mkString("\"related\": [", "," , "]" )
 
