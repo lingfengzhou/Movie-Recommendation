@@ -10,17 +10,15 @@ import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.{DoubleType, IntegerType}
 
 object DoKmeans {
+    val spark = SparkSession.builder
+      .master("local")
+      .appName("getmovies")
+      .getOrCreate()
+    spark.sparkContext.setLogLevel("ERROR")
+    import spark.implicits._
+
     def train(): DataFrame = {
-        val spark = SparkSession.builder
-          .master("local")
-          .appName("Kmeans")
-          .getOrCreate()
-        spark.sparkContext.setLogLevel("ERROR")
-        import spark.implicits._
-        println("")
-        println("Define the input data")
-        println("=====================")
-        println("")
+
 
         val file_basic = "DataCenter/src/main/resources/title.basics.tsv"
         val df_basic_raw = spark.read.format("csv")
@@ -152,7 +150,6 @@ object DoKmeans {
 //        println(s"silhouette: "+silhouette)
         distancesDF.show(10)
         distancesDF.write.mode(SaveMode.Overwrite).parquet("DataCenter/src/main/resources/result.parquet")
-        spark.sparkContext.stop()
         distancesDF
     }
 }
