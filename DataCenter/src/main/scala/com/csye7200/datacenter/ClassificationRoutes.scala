@@ -25,7 +25,7 @@ trait ClassificationRoutes extends JsonSupport{
 
   def classificationActor: ActorRef
 
-  implicit lazy val timeout = Timeout(60.seconds)
+  implicit lazy val timeout = Timeout(5.seconds)
 
   lazy val classificationRoutes: Route =
     pathPrefix("movies") {
