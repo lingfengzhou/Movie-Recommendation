@@ -61,7 +61,7 @@ trait ClassificationRoutes extends JsonSupport{
                 val maybeMovies: Future[String] =
                   (classificationActor ? GetRecMovies(info.title,info.limit)).mapTo[String]
                 onSuccess(maybeMovies) {
-                  case perform : String => complete((StatusCodes.Found),perform)
+                  case perform : String => complete((StatusCodes.OK),perform)
 //                  performed: Option[RecMovies] => performed match {
 //                  case Some(movies) => complete(StatusCodes.Found, movies)
 //                  case None => complete(StatusCodes.NotFound)
