@@ -15,19 +15,16 @@ class RoutesSpec extends WordSpec with Matchers with ScalaFutures with Scalatest
   override val classificationActor: ActorRef = system.actorOf(ClassificationActor.props, "classificationActor")
 
   lazy val routes = classificationRoutes
+  implicit val timeout = RouteTestTimeout(20.seconds dilated)
+  "GetMovieRoutes" should {
+    "return ok"in {
+      val info = Info("Jana, the Girl from the Bohemian Forest",3)
+      val infoEntity = Marshal(info).to[MessageEntity].futureValue
 
-  //todo "be able to update (POST /movies/update-classification)"
-
-  //todo get movie result(title)
-//  "GetMovieRoutes" should {
-//    "return ok"in {
-//    val info = Info("Jana, the Girl from the Bohemian Forest",3)
-//    val infoEntity = Marshal(info).to[MessageEntity].futureValue
-//
-//    val request = Post("/movies/element/getMovie").withEntity(infoEntity)
-//    request ~> routes ~> check{
-//      status should === (StatusCodes.OK)
-//    }
-//  }
-//  }
+      val request = Post("/movies/element/getMovie").withEntity(infoEntity)
+      request ~> routes ~> check{
+        status should === (StatusCodes.OK)
+    }
+  }
+  }
 }

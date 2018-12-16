@@ -25,7 +25,7 @@ trait ClassificationRoutes extends JsonSupport{
 
   def classificationActor: ActorRef
 
-  implicit lazy val timeout = Timeout(5.seconds)
+//  implicit lazy val timeout = Timeout(5.seconds)
 
   lazy val classificationRoutes: Route =
     pathPrefix("movies") {
@@ -59,7 +59,7 @@ trait ClassificationRoutes extends JsonSupport{
             path("getMovie"){
               entity(as[Info]) { info =>
                 val maybeMovies: Future[String] =
-                  (classificationActor ? GetRecMovies(info.title,info.limit)).mapTo[String]
+                  (classificationActor .?(GetRecMovies(info.title,info.limit))(20.seconds)).mapTo[String]
                 onSuccess(maybeMovies) {
                   case perform : String => complete((StatusCodes.OK),perform)
 //                  performed: Option[RecMovies] => performed match {
